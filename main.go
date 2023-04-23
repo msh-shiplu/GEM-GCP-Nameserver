@@ -101,11 +101,13 @@ func newApp(ctx context.Context, port, projectID string) (*App, error) {
 		return nil, fmt.Errorf("unable to initialize logging client: %v", err)
 	}
 	app.log = client.Logger("test-log", logging.RedirectAsJSON(os.Stderr))
-
+	
 	// Setup request router.
 	r := mux.NewRouter()
 	r.HandleFunc("/", app.Handler).
 		Methods("GET")
+	r.HandleFunc("/tell", app.tellHandler).Methods("GET")
+	r.HandleFunc("/ask", app.askHandler).Methods("GET")
 	app.Server.Handler = r
 
 	return app, nil
